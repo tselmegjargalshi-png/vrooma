@@ -4,9 +4,9 @@ import type { Body, PhotoKind } from "./types";
 // Generated vehicle illustrations (original vector art). Used for demo listings so no third party photography is required.
 type Shape = { deck: number; cBase: number; roofRear: number; roofFront: number; aBase: number; hood: number; roof: number };
 const SHAPES: Record<string, Shape> = {
-  sedan: { deck: 290, cBase: 235, roofRear: 318, roofFront: 438, aBase: 520, hood: 292, roof: 196 },
+  sedan: { deck: 292, cBase: 222, roofRear: 322, roofFront: 440, aBase: 528, hood: 296, roof: 194 },
   suv: { deck: 252, cBase: 118, roofRear: 135, roofFront: 480, aBase: 556, hood: 288, roof: 158 },
-  hatch: { deck: 262, cBase: 140, roofRear: 205, roofFront: 440, aBase: 528, hood: 292, roof: 186 },
+  hatch: { deck: 270, cBase: 150, roofRear: 232, roofFront: 438, aBase: 534, hood: 298, roof: 188 },
   pickup: { deck: 282, cBase: 352, roofRear: 392, roofFront: 506, aBase: 582, hood: 284, roof: 176 },
   van: { deck: 238, cBase: 100, roofRear: 118, roofFront: 530, aBase: 612, hood: 302, roof: 150 },
   coupe: { deck: 294, cBase: 205, roofRear: 305, roofFront: 400, aBase: 512, hood: 298, roof: 214 },
@@ -26,20 +26,23 @@ function exterior(body: Body, color: string, variant: number, uid: string): stri
   const dark = shade(hex, -55), light = shade(hex, 40);
   const nose = 736, tail = 78, floor = 352, beltY = s.hood - 10;
   const bodyPath = `M ${tail} ${floor} L ${tail} ${s.deck + 6} Q ${tail} ${s.deck} ${tail + 24} ${s.deck} L ${s.cBase} ${s.deck} C ${s.cBase + 40} ${s.deck - 4} ${s.roofRear - 40} ${s.roof + 4} ${s.roofRear} ${s.roof} L ${s.roofFront} ${s.roof} C ${s.roofFront + 50} ${s.roof + 2} ${s.aBase - 50} ${s.hood - 16} ${s.aBase} ${s.hood} L ${nose - 70} ${s.hood + 6} Q ${nose - 6} ${s.hood + 14} ${nose} ${s.hood + 44} L ${nose} ${floor} Z`;
-  const glass = `M ${s.cBase + 22} ${beltY} L ${s.roofRear - 6} ${s.roof + 14} L ${s.roofFront + 12} ${s.roof + 14} L ${s.aBase - 12} ${beltY} Z`;
+  const gcx = (s.cBase + s.aBase) / 2;
   const pillar = (s.roofRear + s.roofFront) / 2;
   const wheel = (cx: number) => `<circle cx="${cx}" cy="${floor}" r="${body === "suv" || body === "pickup" || body === "crossover" ? 60 : 54}" fill="#08090b"/><circle cx="${cx}" cy="${floor}" r="${body === "suv" || body === "pickup" || body === "crossover" ? 47 : 42}" fill="#15161a"/><circle cx="${cx}" cy="${floor}" r="30" fill="url(#rim${uid})"/><circle cx="${cx}" cy="${floor}" r="7" fill="#2a2c31"/>${[0, 72, 144, 216, 288].map((a) => `<line x1="${cx}" y1="${floor}" x2="${cx + 28 * Math.cos((a * Math.PI) / 180)}" y2="${floor + 28 * Math.sin((a * Math.PI) / 180)}" stroke="#7b8088" stroke-width="3"/>`).join("")}`;
   const zoom = variant === 1 ? `transform="translate(-210 -90) scale(1.35)"` : variant === 2 ? `transform="translate(800 0) scale(-1 1)"` : "";
   return `<g ${zoom}>
   <ellipse cx="410" cy="396" rx="340" ry="22" fill="#000" opacity=".45"/>
-  <defs><clipPath id="clip${uid}"><path d="${bodyPath}"/></clipPath>
+  <defs><clipPath id="clip${uid}"><path d="${bodyPath}"/></clipPath><clipPath id="win${uid}"><rect x="${s.cBase + 10}" y="${s.roof - 4}" width="${s.aBase - s.cBase - 8}" height="${beltY - s.roof + 2}"/></clipPath><linearGradient id="gl${uid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7f9bb8" stop-opacity=".5"/><stop offset=".5" stop-color="#7f9bb8" stop-opacity="0"/></linearGradient>
   <linearGradient id="body${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${light}"/><stop offset=".55" stop-color="${hex}"/><stop offset="1" stop-color="${dark}"/></linearGradient>
   <radialGradient id="rim${uid}"><stop offset="0" stop-color="#d9dce1"/><stop offset="1" stop-color="#8e939b"/></radialGradient></defs>
   <path d="${bodyPath}" fill="url(#body${uid})"/>
   <g clip-path="url(#clip${uid})">
-    <path d="${glass}" fill="#0d1218" opacity=".92"/>
-    <path d="${glass}" fill="url(#body${uid})" opacity=".12"/>
-    <rect x="${pillar - 3}" y="${s.roof}" width="6" height="${beltY - s.roof}" fill="${hex}"/>
+    <g clip-path="url(#win${uid})"><path d="${bodyPath}" transform="translate(${gcx} ${beltY}) scale(.9 .84) translate(${-gcx} ${-beltY})" fill="#0b1016"/>
+      <path d="${bodyPath}" transform="translate(${gcx} ${beltY}) scale(.9 .84) translate(${-gcx} ${-beltY})" fill="url(#gl${uid})" opacity=".55"/></g>
+    <rect x="${pillar - 3}" y="${s.roof}" width="7" height="${beltY - s.roof}" fill="${hex}"/>
+    <rect x="${pillar + (s.aBase - pillar) * 0.62}" y="${beltY - 2}" width="2" height="${floor - beltY - 22}" fill="#000" opacity=".25"/>
+    <rect x="${pillar - (pillar - s.cBase) * 0.55}" y="${beltY - 2}" width="2" height="${floor - beltY - 22}" fill="#000" opacity=".25"/>
+    <rect x="${s.aBase - 18}" y="${beltY - 4}" width="26" height="12" rx="5" fill="${dark}"/>
     <rect x="${tail}" y="${beltY + 8}" width="${nose - tail}" height="3" fill="#000" opacity=".22"/>
     <rect x="${tail}" y="${floor - 26}" width="${nose - tail}" height="26" fill="#000" opacity=".28"/>
     <path d="M ${tail + 20} ${beltY + 34} L ${nose - 20} ${beltY + 30}" stroke="#fff" stroke-opacity=".28" stroke-width="2"/>

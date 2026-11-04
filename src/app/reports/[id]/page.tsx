@@ -38,12 +38,12 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
             <div><dt className="text-steel-500 text-xs">{t("veh.mileage")} ({t("veh.sellerdeclared")})</dt><dd className="font-semibold">{fmtNum(v.mileage)} {t("common.km")}</dd></div>
             <div><dt className="text-steel-500 text-xs">{t("veh.year")}</dt><dd className="font-semibold">{v.year}</dd></div></dl></div>}
         <h2 className="font-bold text-lg mt-8 mb-3">{t("insp.checks")}</h2>
-        <table className="tbl"><tbody>{CHECKS.map((k) => <tr key={k}><td className="font-semibold w-48">{t("check." + k)}</td><td className="w-40"><span className="flex gap-0.5">{[1, 2, 3, 4, 5].map((n) => <span key={n} className={`h-2 w-6 rounded-full ${n <= r.checks[k].score ? "bg-ok" : "bg-ink-900/10"}`} />)}</span></td><td className="text-steel-600">{r.checks[k].note || "–"}</td></tr>)}</tbody></table>
+        <table className="tbl"><tbody>{CHECKS.map((k) => <tr key={k}><td className="font-semibold w-48">{t("check." + k)}</td><td className="w-40"><span className="flex gap-0.5">{[1, 2, 3, 4, 5].map((n) => <span key={n} className={`h-2 w-6 rounded-full ${n <= r.checks[k].score ? "bg-ok" : "bg-ink-900/10"}`} />)}</span></td><td className="text-steel-600">{r.checks[k].note || "·"}</td></tr>)}</tbody></table>
         <div className="grid sm:grid-cols-2 gap-6 mt-8">
           <div><h3 className="font-bold mb-1">{t("veh.accident")}</h3><p className={`text-sm font-semibold ${r.accidentFound ? "text-warn" : "text-ok"}`}>{r.accidentFound ? t("insp.accfound") : t("insp.accnone")}</p>{r.accidentNote && <p className="text-sm text-steel-600 mt-1">{r.accidentNote}</p>}</div>
-          <div><h3 className="font-bold mb-1">{t("insp.maintenance")}</h3><p className="text-sm text-steel-600">{r.maintenance || "–"}</p></div>
+          <div><h3 className="font-bold mb-1">{t("insp.maintenance")}</h3><p className="text-sm text-steel-600">{r.maintenance || "·"}</p></div>
         </div>
-        <div className="mt-6"><h3 className="font-bold mb-1">{t("insp.notes")}</h3><p className="text-sm text-steel-600 whitespace-pre-wrap">{r.notes || "–"}</p></div>
+        <div className="mt-6"><h3 className="font-bold mb-1">{t("insp.notes")}</h3><p className="text-sm text-steel-600 whitespace-pre-wrap">{r.notes || "·"}</p></div>
         {r.photos.length > 0 && <div className="mt-6"><h3 className="font-bold mb-2">{t("insp.photos")}</h3><div className="grid grid-cols-3 sm:grid-cols-4 gap-2">{/* eslint-disable-next-line @next/next/no-img-element */}{r.photos.map((p, i) => <img key={i} src={p} alt="" className="rounded-xl aspect-[4/3] object-cover w-full" />)}</div></div>}
         <p className="text-[11px] text-steel-500 mt-8 pt-4 border-t border-ink-900/10">{t("insp.disclaimer")}{r.demo ? ` ${t("insp.demo")}` : ""}</p>
       </article>

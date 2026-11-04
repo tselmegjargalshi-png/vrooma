@@ -29,7 +29,7 @@ function Inner() {
         {rows.length === 0 ? <Empty title={t("insp.none")} /> : (
           <table className="tbl min-w-[780px]" data-testid="appt-table"><thead><tr><th>{t("nav.cars")}</th><th>{t("common.date")}</th><th>{t("appt.place")}</th><th>{t("insp.inspector")}</th><th>{t("common.status")}</th><th /></tr></thead>
             <tbody>{rows.map((a) => (
-              <tr key={a.id} data-testid="appt-row" data-id={a.id}>
+              <tr key={a.id} data-testid="appt-row" data-id={a.id} data-vehicle={a.vehicleId}>
                 <td><Link href={`/cars/${a.vehicleId}`} className="font-semibold hover:underline">{vname(a.vehicleId)}</Link></td>
                 <td className="whitespace-nowrap">{fmtDate(a.at, lang, true)}</td><td>{a.place}</td>
                 <td>{st.users.find((u) => u.id === a.inspectorId)?.name ?? <span className="text-steel-400">{t("insp.unassigned")}</span>}</td>

@@ -55,7 +55,7 @@ export function VehicleCard({ v, layout = "grid", priority }: { v: Vehicle; layo
   const title = `${brandName(v.brandId)} ${v.modelName}`;
   const list = layout === "list";
   return (
-    <Link href={`/cars/${v.id}`} data-testid="vehicle-card" data-id={v.id}
+    <Link href={`/cars/${v.id}`} data-testid="vehicle-card" data-id={v.id} data-brand={v.brandId} data-model={v.modelId} data-category={v.categoryId} data-body={v.body} data-year={v.year} data-import={v.importYear ?? ""} data-price={v.price} data-km={v.mileage} data-cc={v.cc} data-fuel={v.fuel} data-trans={v.trans} data-drive={v.drive} data-steering={v.steering} data-color={v.color} data-doors={v.doors} data-seats={v.seats} data-province={v.province} data-dealer={v.dealerId ?? ""} data-accident={v.accident} data-origin={v.origin} data-tier={v.tier}
       className={`group card overflow-hidden flex ${list ? "flex-col sm:flex-row" : "flex-col"} hover:shadow-lift transition-shadow`}>
       <div className={`relative bg-ink-800 ${list ? "sm:w-72 sm:shrink-0 aspect-[16/10] sm:aspect-auto" : "aspect-[16/10]"}`}>
         {/* eslint-disable-next-line @next/next/no-img-element */}

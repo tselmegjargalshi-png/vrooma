@@ -8,8 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "seed:sql": "node scripts/generate-seed-sql.mjs",
-    "e2e": "node scripts/e2e.mjs"
+    "e2e": "node --experimental-strip-types scripts/e2e.mjs"
   },
   "dependencies": {
     "@fontsource/inter": "^5.1.1",
