@@ -60,8 +60,8 @@ export default function ComparePage() {
             {items.map((v) => (
               <div key={v.id} className="p-4 relative">
                 <button onClick={() => toggle(v.id)} aria-label={t("common.delete")} className="absolute right-3 top-3 z-10 h-7 w-7 rounded-full bg-white shadow grid place-items-center"><X size={14} /></button>
-                <Link href={`/cars/${v.id}`}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={photoSrc(v, 0)} alt="" className="w-full aspect-[16/10] object-cover rounded-xl" /></Link>
-                <Link href={`/cars/${v.id}`} className="font-bold mt-3 block hover:underline">{brandName(v.brandId)} {v.modelName}</Link>
+                <Link href={`/cars/view?id=${v.id}`}>{/* eslint-disable-next-line @next/next/no-img-element */}<img src={photoSrc(v, 0)} alt="" className="w-full aspect-[16/10] object-cover rounded-xl" /></Link>
+                <Link href={`/cars/view?id=${v.id}`} className="font-bold mt-3 block hover:underline">{brandName(v.brandId)} {v.modelName}</Link>
                 <div className="text-sm text-steel-500">{v.year}</div>
               </div>
             ))}

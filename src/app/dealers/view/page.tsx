@@ -1,5 +1,6 @@
 "use client";
-import { use } from "react";
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { BadgeCheck, MapPin, Phone, Mail } from "lucide-react";
 import { useStore } from "@/lib/store";
@@ -11,8 +12,7 @@ import { DealerLogo } from "@/components/DealerLogo";
 import { fmtPhoneFull, telHref } from "@/lib/format";
 import { distName, provName } from "@/lib/geo";
 
-export default function DealerPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+function DealerPageInner({ id }: { id: string }) {
   const { t, lang } = useT();
   const d = useStore((s) => s.dealers).find((x) => x.id === id);
   const vehicles = useStore((s) => s.vehicles);
@@ -34,3 +34,6 @@ export default function DealerPage({ params }: { params: Promise<{ id: string }>
     </div>
   );
 }
+
+function DealerPageQuery() { const id = useSearchParams().get("id") ?? ""; return <DealerPageInner key={id} id={id} />; }
+export default function DealerPage() { return <Suspense fallback={null}><DealerPageQuery /></Suspense>; }

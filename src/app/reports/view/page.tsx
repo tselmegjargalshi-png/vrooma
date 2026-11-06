@@ -1,5 +1,6 @@
 "use client";
-import { use } from "react";
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Printer } from "lucide-react";
 import { useStore } from "@/lib/store";
@@ -9,8 +10,7 @@ import { fmtDate, fmtNum } from "@/lib/format";
 import { CHECKS } from "@/lib/types";
 import { Logo } from "@/components/Logo";
 
-export default function ReportPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+function ReportPageInner({ id }: { id: string }) {
   const { t, lang } = useT();
   const brandName = useBrandName();
   const r = useStore((s) => s.reports).find((x) => x.id === id);
@@ -23,7 +23,7 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
   return (
     <div className="container max-w-4xl py-8">
       <div className="flex justify-between items-center mb-5 no-print">
-        <Link href={v ? `/cars/${v.id}` : "/"} className="text-sm font-semibold text-steel-500 hover:text-ink-900">← {t("common.back")}</Link>
+        <Link href={v ? `/cars/view?id=${v.id}` : "/"} className="text-sm font-semibold text-steel-500 hover:text-ink-900">← {t("common.back")}</Link>
         <button onClick={() => window.print()} className="btn btn-sm btn-primary" data-testid="print-report"><Printer size={15} />{t("insp.pdf")}</button>
       </div>
       <article className="card p-6 sm:p-10" data-testid="report">
@@ -50,3 +50,6 @@ export default function ReportPage({ params }: { params: Promise<{ id: string }>
     </div>
   );
 }
+
+function ReportPageQuery() { const id = useSearchParams().get("id") ?? ""; return <ReportPageInner key={id} id={id} />; }
+export default function ReportPage() { return <Suspense fallback={null}><ReportPageQuery /></Suspense>; }
