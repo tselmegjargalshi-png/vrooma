@@ -117,7 +117,7 @@ await step("06 Vehicle appears in the public marketplace", async () => {
   await logout();
   await setUrl("q=Prius");
   assert((await page.locator(`[data-testid="vehicle-card"][data-id="${vid}"]`).count()) === 1, "approved listing not in search");
-  await go(`/cars/${vid}`);
+  await go(`/cars/view?id=${vid}`);
   assert((await page.locator('[data-testid="veh-title"]').innerText()).includes("Prius 50"), "detail page title wrong");
   assert((await page.locator('[data-testid="veh-price"]').innerText()).includes("52,000,000"), "price wrong");
   // seller uploaded images show in gallery
@@ -208,7 +208,7 @@ await step("09 Customer compares two vehicles and differences are highlighted", 
 
 // ───── 10. favorite
 await step("10 Customer saves the new listing as a favorite", async () => {
-  await go(`/cars/${vid}`);
+  await go(`/cars/view?id=${vid}`);
   await page.locator('aside [data-testid="fav-btn"]').click();
   await go("/account?tab=favorites");
   assert((await page.locator(`[data-testid="favorites"] [data-id="${vid}"]`).count()) === 1, "favorite not saved");
@@ -216,7 +216,7 @@ await step("10 Customer saves the new listing as a favorite", async () => {
 
 // ───── 11. inquiry
 await step("11 Customer submits an inquiry", async () => {
-  await go(`/cars/${vid}`);
+  await go(`/cars/view?id=${vid}`);
   await page.click('[data-testid="open-inquiry"]');
   await page.fill('input[name="phone"]', "");
   await page.click('[data-testid="send-inquiry"]');
@@ -226,7 +226,7 @@ await step("11 Customer submits an inquiry", async () => {
   await page.waitForSelector('[data-testid="inquiry-sent"]');
 });
 await step("11b Customer contacts seller by message", async () => {
-  await go(`/cars/${vid}`);
+  await go(`/cars/view?id=${vid}`);
   await page.click('[data-testid="contact-seller"]');
   await page.waitForURL(/\/messages\?thread=/);
   await page.fill('[data-testid="msg-input"]', "Сайн байна уу, маргааш үзэж болох уу?");
@@ -274,14 +274,14 @@ await step("13 Seller manages the lead and schedules an inspection", async () =>
   assert((await page.locator('[data-testid="appt-row"]').count()) >= 1, "appointment missing in inspections list");
 });
 await step("13b Seller lowers the price and the customer who saved it is notified", async () => {
-  await go(`/dashboard/listings/${vid}`);
+  await go(`/dashboard/listings/edit?id=${vid}`);
   await page.fill('input[name="price"]', "49500000");
   await page.click('[data-testid="submit-listing"]');
   await page.waitForURL(/\/dashboard\/listings$/);
   await login("customer01@vrooma.demo");
   await go("/notifications");
   assert((await page.locator('[data-testid="notice-list"] >> text=/Үнэ буурлаа/').count()) >= 1, "no price drop notification");
-  await go(`/cars/${vid}`);
+  await go(`/cars/view?id=${vid}`);
   assert((await page.locator('[data-testid="veh-price"]').innerText()).includes("49,500,000"), "new price not shown");
 });
 
@@ -301,7 +301,7 @@ await step("14 Inspector claims the inspection and publishes a report", async ()
   await page.click('[data-testid="publish-report"]');
   await page.waitForURL(/\/dashboard\/inspections$/);
   assert((await page.locator('[data-testid="report-table"] tbody tr').count()) >= 1, "report missing in table");
-  await go(`/cars/${vid}`);
+  await go(`/cars/view?id=${vid}`);
   await page.waitForSelector('[data-testid="inspection-block"]'); console.log("DBG block:", (await page.locator('[data-testid="inspection-block"]').innerText()).replace(/\n/g," | "));
   await page.waitForSelector('[data-testid="open-report"]', { timeout: 5000 });
   await page.click('[data-testid="open-report"]');
@@ -422,7 +422,7 @@ await step("19 Role permissions are enforced", async () => {
   await logout(); await go("/dashboard"); await page.waitForURL(/\/login/, { timeout: 5000 });
   // another seller cannot edit someone else's listing
   await login("seller02@vrooma.demo");
-  await go("/dashboard/listings/v001"); assert((await page.locator("text=Хандах эрхгүй").count()) >= 1, "seller edited another seller's listing");
+  await go("/dashboard/listings/edit?id=v001"); assert((await page.locator("text=Хандах эрхгүй").count()) >= 1, "seller edited another seller's listing");
 });
 await step("20 Admin manages brands (add, edit, blocked delete when in use, delete)", async () => {
   await login("admin@vrooma.demo");
@@ -448,11 +448,11 @@ await step("21 Public pages: map (markers, preview, area filter, list toggle), d
   await page.click('[data-testid="map-list-toggle"]'); assert((await page.locator('[data-testid="vehicle-card"]').count()) > 0, "list view empty");
   await go("/dealers"); assert((await page.locator("text=Алтан Гүүр Авто").count()) >= 1, "dealers missing");
   await page.click("text=Алтан Гүүр Авто"); await page.waitForSelector('[data-testid="vehicle-card"]');
-  await go("/news/n1"); assert((await page.locator("h1").count()) === 1, "article missing");
+  await go("/news/view?id=n1"); assert((await page.locator("h1").count()) === 1, "article missing");
   void inView;
 });
 await step("22 Gallery full screen viewer and video tab", async () => {
-  await go("/cars/v001");
+  await go("/cars/view?id=v001");
   await page.click('[data-testid="fullscreen"]'); await page.waitForSelector('[data-testid="lightbox"]');
   await page.keyboard.press("ArrowRight"); await page.keyboard.press("Escape");
   assert((await page.locator('[data-testid="lightbox"]').count()) === 0, "lightbox did not close");
@@ -460,7 +460,7 @@ await step("22 Gallery full screen viewer and video tab", async () => {
 });
 
 // ───── hyphen / dash policy, Ө Ү fonts, console errors, mobile
-const routes = ["/", "/cars", "/cars/v001", "/compare", "/calculator", "/map", "/dealers", "/dealers/d1", "/news", "/news/n2", "/login", "/register", "/reports/rp1"];
+const routes = ["/", "/cars", "/cars/view?id=v001", "/compare", "/calculator", "/map", "/dealers", "/dealers/d1", "/news", "/news/n2", "/login", "/register", "/reports/rp1"];
 const authRoutes = ["/dashboard", "/dashboard/listings", "/dashboard/leads", "/dashboard/inspections", "/dashboard/analytics", "/dashboard/promote", "/dashboard/team", "/dashboard/profile", "/messages", "/notifications"];
 const adminRoutes = ["/dashboard", "/dashboard/admin/listings", "/dashboard/admin/users", "/dashboard/admin/dealers", "/dashboard/admin/catalog", "/dashboard/admin/ads", "/dashboard/admin/payments", "/dashboard/admin/reports", "/dashboard/admin/audit", "/dashboard/analytics"];
 async function scanText() {
@@ -505,11 +505,11 @@ await step("25 Mobile layout (390px): no horizontal overflow, menu works", async
   const mctx = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true, deviceScaleFactor: 2 });
   const mp = await mctx.newPage(); mp.on("pageerror", (e) => consoleErrors.push("MOBILE " + e.message));
   const bad = [];
-  for (const r of ["/", "/cars", "/cars/v002", "/compare", "/calculator", "/map", "/dealers", "/news", "/login", "/register"]) {
+  for (const r of ["/", "/cars", "/cars/view?id=v002", "/compare", "/calculator", "/map", "/dealers", "/news", "/login", "/register"]) {
     await mp.goto(BASE + r, { waitUntil: "domcontentloaded" }); await mp.waitForSelector("main#main"); await mp.waitForTimeout(400);
     const w = await mp.evaluate(() => ({ s: document.documentElement.scrollWidth, c: document.documentElement.clientWidth }));
     if (w.s > w.c + 1) bad.push(`${r} overflow ${w.s}>${w.c}`);
-    if (["/", "/cars", "/cars/v002", "/map"].includes(r)) await mp.screenshot({ path: `/tmp/shots/m${r.replace(/\//g, "_")}.png` });
+    if (["/", "/cars", "/cars/view?id=v002", "/map"].includes(r)) await mp.screenshot({ path: `/tmp/shots/m${r.replace(/[\/?=]/g, "_")}.png` });
   }
   await mp.goto(BASE + "/", { waitUntil: "domcontentloaded" }); await mp.waitForSelector("main#main");
   await mp.click('button[aria-label="Цэс"]'); assert((await mp.locator('nav, a:has-text("Лизингийн тооцоолуур")').count()) > 0, "mobile menu empty");

@@ -48,7 +48,7 @@ function Inner() {
             <>
               <div className="px-4 py-3 border-b border-ink-900/[.07] flex items-center gap-3">
                 <button className="md:hidden h-9 w-9 grid place-items-center rounded-full hover:bg-ink-900/5" onClick={() => router.push("/messages")} aria-label={t("common.back")}><ArrowLeft size={18} /></button>
-                <div className="min-w-0"><div className="font-bold truncate">{label(other(active))}</div>{active.vehicleId && (() => { const v = vehicles.find((x) => x.id === active.vehicleId); return v ? <Link href={`/cars/${v.id}`} className="text-xs text-brass-700 font-semibold hover:underline">{brandName(v.brandId)} {v.modelName} {v.year}</Link> : null; })()}</div>
+                <div className="min-w-0"><div className="font-bold truncate">{label(other(active))}</div>{active.vehicleId && (() => { const v = vehicles.find((x) => x.id === active.vehicleId); return v ? <Link href={`/cars/view?id=${v.id}`} className="text-xs text-brass-700 font-semibold hover:underline">{brandName(v.brandId)} {v.modelName} {v.year}</Link> : null; })()}</div>
               </div>
               <div className="flex-1 overflow-y-auto p-4 space-y-2.5 max-h-[420px] min-h-[300px]" data-testid="thread-messages">
                 {active.messages.length === 0 && <p className="text-sm text-steel-500 text-center py-10">{t("msg.startconv")}</p>}

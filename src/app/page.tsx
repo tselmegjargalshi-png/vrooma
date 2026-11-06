@@ -58,7 +58,7 @@ export default function Home() {
   const lux = pub.filter((v) => v.categoryId === "luxury").sort(sort);
   const cheap = pub.filter((v) => v.price <= 30_000_000).sort((a, b) => a.price - b.price);
   const verifiedSellers = [
-    ...dealers.filter((d) => d.verified).map((d) => ({ id: d.id, name: d.name, kind: "dealer", n: pub.filter((v) => v.dealerId === d.id).length, href: `/dealers/${d.id}`, tone: d.tone })),
+    ...dealers.filter((d) => d.verified).map((d) => ({ id: d.id, name: d.name, kind: "dealer", n: pub.filter((v) => v.dealerId === d.id).length, href: `/dealers/view?id=${d.id}`, tone: d.tone })),
     ...users.filter((u) => u.role === "seller" && u.verified).slice(0, 4).map((u) => ({ id: u.id, name: u.name, kind: "individual", n: pub.filter((v) => v.sellerId === u.id).length, href: `/cars?verified=1&seller=individual`, tone: "#0B0B0D" })),
   ];
   const topBrands = brands.map((b) => ({ b, n: pub.filter((v) => v.brandId === b.id).length })).sort((a, b) => b.n - a.n).slice(0, 12);
@@ -90,7 +90,7 @@ export default function Home() {
             <h1 className="text-4xl sm:text-6xl font-extrabold leading-[1.05] text-balance">{t("home.title")}</h1>
             <p className="mt-5 text-white/70 text-lg max-w-xl">{t("home.sub")}</p>
             {cur && (
-              <Link href={`/cars/${cur.v.id}`} onClick={() => adClick(cur.ad.id)} data-testid="hero-ad" className="mt-8 inline-flex items-center gap-3 rounded-full bg-white/10 backdrop-blur border border-white/15 pl-4 pr-2 py-2 hover:bg-white/15">
+              <Link href={`/cars/view?id=${cur.v.id}`} onClick={() => adClick(cur.ad.id)} data-testid="hero-ad" className="mt-8 inline-flex items-center gap-3 rounded-full bg-white/10 backdrop-blur border border-white/15 pl-4 pr-2 py-2 hover:bg-white/15">
                 <span className="chip bg-brass-500 text-ink-900">{t("home.ad")}</span>
                 <span className="text-sm font-semibold">{brandName(cur.v.brandId)} {cur.v.modelName} {cur.v.year}</span>
                 <span className="text-sm text-white/70 hidden sm:inline">{price(cur.v.price, true).main}</span>
@@ -135,7 +135,7 @@ export default function Home() {
       <Section dark eyebrow={t("home.premiumdealers.eyebrow")} title={t("home.premiumdealers")} href="/dealers">
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {(spot.length ? spot.map((a) => dealers.find((d) => d.id === a.dealerId)!).filter(Boolean) : dealers).slice(0, 6).map((d) => (
-            <Link key={d.id} href={`/dealers/${d.id}`} className="rounded-2xl bg-white/[.06] border border-white/10 p-5 hover:bg-white/10 transition-colors">
+            <Link key={d.id} href={`/dealers/view?id=${d.id}`} className="rounded-2xl bg-white/[.06] border border-white/10 p-5 hover:bg-white/10 transition-colors">
               <div className="flex items-center gap-3"><div className="h-12 w-12 rounded-xl grid place-items-center font-extrabold text-lg text-white" style={{ background: d.tone }}>{d.name.slice(0, 1)}</div>
                 <div className="min-w-0"><div className="font-bold truncate flex items-center gap-1.5">{d.name}{d.verified && <BadgeCheck size={15} className="text-brass-300 shrink-0" />}</div><div className="text-xs text-white/50">{t("plan." + d.plan)}</div></div></div>
               <p className="text-sm text-white/65 mt-3 line-clamp-2">{d.description}</p>
@@ -181,7 +181,7 @@ export default function Home() {
       <Section title={t("nav.news")} href="/news">
         <div className="grid md:grid-cols-3 gap-5">
           {articles.slice(0, 3).map((a) => (
-            <Link key={a.id} href={`/news/${a.id}`} className="card overflow-hidden hover:shadow-lift transition-shadow group">
+            <Link key={a.id} href={`/news/view?id=${a.id}`} className="card overflow-hidden hover:shadow-lift transition-shadow group">
               <div className="h-36 relative" style={{ background: `linear-gradient(135deg, ${a.tone}, #0B0B0D)` }}><span className="absolute left-4 bottom-4 chip bg-white/90 text-ink-900">{lang === "mn" ? a.tagMn : a.tagEn}</span></div>
               <div className="p-5"><h3 className="font-bold leading-snug group-hover:underline">{lang === "mn" ? a.mn : a.en}</h3><div className="text-xs text-steel-500 mt-2">{fmtDate(a.at, lang)}</div></div>
             </Link>

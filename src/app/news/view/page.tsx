@@ -1,13 +1,13 @@
 "use client";
-import { use } from "react";
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useStore } from "@/lib/store";
 import { useT } from "@/lib/hooks";
 import { fmtDate } from "@/lib/format";
 import { Empty } from "@/components/ui";
 
-export default function Article({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+function ArticleInner({ id }: { id: string }) {
   const { t, lang } = useT();
   const a = useStore((s) => s.articles).find((x) => x.id === id);
   if (!a) return <div className="container py-16"><Empty title={t("err.notfound")} action={<Link href="/news" className="btn btn-primary">{t("nav.news")}</Link>} /></div>;
@@ -22,3 +22,6 @@ export default function Article({ params }: { params: Promise<{ id: string }> })
     </article>
   );
 }
+
+function ArticleQuery() { const id = useSearchParams().get("id") ?? ""; return <ArticleInner key={id} id={id} />; }
+export default function Article() { return <Suspense fallback={null}><ArticleQuery /></Suspense>; }

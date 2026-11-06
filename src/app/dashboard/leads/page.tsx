@@ -118,7 +118,7 @@ function LeadModal({ lead, onClose, team, canAssign, vname, onMessage }: { lead:
       <div className="grid md:grid-cols-2 gap-6" data-testid="lead-modal">
         <div className="space-y-4">
           <div className="text-sm"><a href={telHref(lead.phone)} className="inline-flex items-center gap-1.5 font-semibold hover:underline"><Phone size={14} />{fmtPhoneFull(lead.phone)}</a>{lead.email && <div className="text-steel-500 mt-1">{lead.email}</div>}
-            <div className="mt-2"><Link href={`/cars/${lead.vehicleId}`} className="font-semibold text-brass-700 hover:underline">{vname(lead.vehicleId)}</Link></div>
+            <div className="mt-2"><Link href={`/cars/view?id=${lead.vehicleId}`} className="font-semibold text-brass-700 hover:underline">{vname(lead.vehicleId)}</Link></div>
             <p className="mt-2 bg-bone-100 rounded-xl p-3 text-steel-700">{lead.message}</p>
             <div className="text-xs text-steel-500 mt-2">{t("crm.source")}: {t("src." + lead.source)} · {fmtDate(lead.createdAt, lang, true)}</div></div>
           <Field label={t("common.status")}><select className="input" name="status" value={lead.status} onChange={(e) => st.setLeadStatus(lead.id, e.target.value as LeadStatus)} data-testid="lead-status">{LEAD_STATUSES.map((s) => <option key={s} value={s}>{t("lead." + s)}</option>)}</select></Field>

@@ -1,5 +1,7 @@
 "use client";
-import { use, useRef, useState } from "react";
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImagePlus, Trash2 } from "lucide-react";
 import { useStore } from "@/lib/store";
@@ -77,4 +79,7 @@ function Editor({ id }: { id: string }) {
     </>
   );
 }
-export default function ReportEditor({ params }: { params: Promise<{ id: string }> }) { const { id } = use(params); return <Guard><Editor id={id} /></Guard>; }
+function ReportEditorInner({ id }: { id: string }) { return <Guard><Editor id={id} /></Guard>; }
+
+function ReportEditorQuery() { const id = useSearchParams().get("id") ?? ""; return <ReportEditorInner key={id} id={id} />; }
+export default function ReportEditor() { return <Suspense fallback={null}><ReportEditorQuery /></Suspense>; }

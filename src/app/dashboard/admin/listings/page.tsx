@@ -33,7 +33,7 @@ function Inner() {
           <table className="tbl min-w-[860px]" data-testid="admin-listings"><thead><tr><th>{t("nav.cars")}</th><th>{t("veh.seller")}</th><th>{t("common.price")}</th><th>{t("common.status")}</th><th>{t("common.date")}</th><th /></tr></thead>
             <tbody>{rows.map((v) => (
               <tr key={v.id} data-testid="admin-row" data-id={v.id}>
-                <td><div className="flex items-center gap-3">{/* eslint-disable-next-line @next/next/no-img-element */}<img src={photoSrc(v, 0)} alt="" className="h-12 w-[72px] rounded-lg object-cover" /><div><Link href={`/cars/${v.id}`} className="font-bold hover:underline">{brandName(v.brandId)} {v.modelName}</Link><div className="text-xs text-steel-500">{v.year} · {v.photos.length} {t("lst.photos")}{v.demo ? ` · ${t("demo.data")}` : ""}</div></div></div></td>
+                <td><div className="flex items-center gap-3">{/* eslint-disable-next-line @next/next/no-img-element */}<img src={photoSrc(v, 0)} alt="" className="h-12 w-[72px] rounded-lg object-cover" /><div><Link href={`/cars/view?id=${v.id}`} className="font-bold hover:underline">{brandName(v.brandId)} {v.modelName}</Link><div className="text-xs text-steel-500">{v.year} · {v.photos.length} {t("lst.photos")}{v.demo ? ` · ${t("demo.data")}` : ""}</div></div></div></td>
                 <td className="text-sm">{seller(v)}</td><td className="font-semibold whitespace-nowrap">{price(v.price, true).main}</td>
                 <td><div className="flex flex-col gap-1 items-start"><Badge tone={statusTone(v.status) as "ok"}>{t("vstatus." + v.status)}</Badge>{v.tier !== "free" && <Badge tone="brass">{t("tier." + v.tier)}</Badge>}</div></td>
                 <td className="text-xs text-steel-600 whitespace-nowrap">{fmtDate(v.createdAt, lang)}</td>
@@ -42,7 +42,7 @@ function Inner() {
                   {v.status === "rejected" && <button className="btn btn-xs btn-outline" onClick={() => st.approveVehicle(v.id)}>{t("common.approve")}</button>}
                   {v.status === "active" && <button className="btn btn-xs btn-ghost" title={t("adm.togglefeatured")} aria-pressed={v.tier === "featured"} onClick={() => st.updateVehicle(v.id, v.tier === "featured" ? { tier: "free", featuredUntil: undefined } : { tier: "featured", featuredUntil: addDays(new Date(), 14) })}><Star size={14} className={v.tier === "featured" ? "fill-brass-500 text-brass-500" : ""} /></button>}
                   {["active", "paused"].includes(v.status) && <button className="btn btn-xs btn-ghost" onClick={() => st.setVehicleStatus(v.id, v.status === "active" ? "paused" : "active")}>{v.status === "active" ? t("lst.pause") : t("lst.resume")}</button>}
-                  <Link href={`/dashboard/listings/${v.id}`} aria-label={t("common.edit")} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-ink-900/5"><Pencil size={14} /></Link>
+                  <Link href={`/dashboard/listings/edit?id=${v.id}`} aria-label={t("common.edit")} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-ink-900/5"><Pencil size={14} /></Link>
                   <button aria-label={t("common.delete")} onClick={() => setDel(v)} className="h-8 w-8 grid place-items-center rounded-lg hover:bg-ink-900/5 text-bad"><Trash2 size={14} /></button></div></td>
               </tr>))}</tbody></table>
         )}

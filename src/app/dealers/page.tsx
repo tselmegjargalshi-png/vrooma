@@ -16,7 +16,7 @@ export default function Dealers() {
       <PageHead title={t("nav.dealers")} sub={t("dealer.sub")} />
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
         {dealers.map((d) => (
-          <Link key={d.id} href={`/dealers/${d.id}`} className="card p-6 hover:shadow-lift transition-shadow">
+          <Link key={d.id} href={`/dealers/view?id=${d.id}`} className="card p-6 hover:shadow-lift transition-shadow">
             <div className="flex items-center gap-4"><DealerLogo d={d} />
               <div className="min-w-0"><h2 className="font-bold text-lg flex items-center gap-1.5 truncate">{d.name}{d.verified && <BadgeCheck size={16} className="text-brass-600 shrink-0" />}</h2><Badge tone="brass">{t("plan." + d.plan)}</Badge></div></div>
             <p className="text-sm text-steel-600 mt-4 line-clamp-3">{d.description}</p>

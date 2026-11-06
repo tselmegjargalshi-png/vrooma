@@ -185,7 +185,7 @@ export const useStore = create<Store>()(
           if (!old) return;
           patchV(id, () => ({ ...patch, prevPrice: patch.price != null && patch.price < old.price ? old.price : patch.price != null && patch.price > old.price ? undefined : old.prevPrice }));
           if (patch.price != null && patch.price < old.price) {
-            Object.entries(get().favorites).forEach(([uidk, ids]) => { if (ids.includes(id)) notify(uidk, "price", "ntf.pricedrop", vName(old), `/cars/${id}`, `pd:${id}:${patch.price}`); });
+            Object.entries(get().favorites).forEach(([uidk, ids]) => { if (ids.includes(id)) notify(uidk, "price", "ntf.pricedrop", vName(old), `/cars/view?id=${id}`, `pd:${id}:${patch.price}`); });
           }
           audit("listing.update", "vehicle", id);
         },
@@ -195,10 +195,10 @@ export const useStore = create<Store>()(
           const v = get().vehicles.find((x) => x.id === id);
           if (!v) return;
           patchV(id, () => ({ status: "active", rejectReason: undefined, expiresAt: addDays(nowIso(), 60), createdAt: nowIso() }));
-          notify(v.sellerId, "listing", "ntf.approved", vName(v), `/cars/${id}`);
+          notify(v.sellerId, "listing", "ntf.approved", vName(v), `/cars/view?id=${id}`);
           const next = { ...v, status: "active" as const, expiresAt: addDays(nowIso(), 60) };
           const ctx = { users: get().users, dealers: get().dealers, brands: get().brands };
-          get().savedSearches.forEach((ss) => { if (ss.notify && matchesSaved(next, ss.query, ctx)) notify(ss.userId, "listing", "ntf.newmatch", vName(v), `/cars/${id}`, `nm:${ss.id}:${id}`); });
+          get().savedSearches.forEach((ss) => { if (ss.notify && matchesSaved(next, ss.query, ctx)) notify(ss.userId, "listing", "ntf.newmatch", vName(v), `/cars/view?id=${id}`, `nm:${ss.id}:${id}`); });
           audit("listing.approve", "vehicle", id);
         },
         rejectVehicle: (id, reason) => {
@@ -258,8 +258,8 @@ export const useStore = create<Store>()(
             if (r.appointmentId) get().updateAppointment(r.appointmentId, { status: "completed", reportId: r.id });
             const v = get().vehicles.find((x) => x.id === r.vehicleId);
             const ap = get().appointments.find((a) => a.id === r.appointmentId);
-            notify(v?.sellerId, "inspection", "ntf.report", vName(v), `/cars/${r.vehicleId}`, `rp:${r.id}`);
-            notify(ap?.customerId, "inspection", "ntf.report", vName(v), `/cars/${r.vehicleId}`, `rp:${r.id}`);
+            notify(v?.sellerId, "inspection", "ntf.report", vName(v), `/cars/view?id=${r.vehicleId}`, `rp:${r.id}`);
+            notify(ap?.customerId, "inspection", "ntf.report", vName(v), `/cars/view?id=${r.vehicleId}`, `rp:${r.id}`);
           }
           audit("report.save", "report", r.id, r.status);
         },

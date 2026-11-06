@@ -95,7 +95,7 @@ export function DemoMap({ vehicles, onBounds, height = 560 }: { vehicles: Vehicl
             <div className="font-bold text-sm truncate">{brandName(selV.brandId)} {selV.modelName}</div>
             <div className="text-xs text-steel-500">{selV.year} · {fmtNum(selV.mileage)} {t("common.km")}</div>
             <div className="font-display font-extrabold mt-1">{price(selV.price, true).main}</div>
-            <Link href={`/cars/${selV.id}`} className="text-xs font-semibold text-brass-600 hover:underline">{t("common.details")} →</Link>
+            <Link href={`/cars/view?id=${selV.id}`} className="text-xs font-semibold text-brass-600 hover:underline">{t("common.details")} →</Link>
           </div>
           <button onClick={() => setSel(null)} aria-label={t("common.close")} className="absolute right-1.5 top-1.5 h-6 w-6 rounded-full bg-white/80 text-xs">×</button>
         </div>

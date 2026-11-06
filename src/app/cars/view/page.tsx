@@ -1,5 +1,7 @@
 "use client";
-import { use, useEffect, useMemo, useRef, useState } from "react";
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Phone, MessageSquare, CalendarCheck, Share2, Flag, BadgeCheck, ShieldCheck, ShieldAlert, FileText, Check, MapPin } from "lucide-react";
@@ -19,8 +21,7 @@ function Row({ k, v }: { k: string; v: React.ReactNode }) {
   return <div className="flex justify-between gap-4 py-2.5 border-b border-ink-900/[.06] text-sm"><dt className="text-steel-500">{k}</dt><dd className="font-semibold text-right">{v}</dd></div>;
 }
 
-export default function VehiclePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+function VehiclePageInner({ id }: { id: string }) {
   const { t, lang } = useT();
   const router = useRouter();
   const user = useUser();
@@ -55,7 +56,7 @@ export default function VehiclePage({ params }: { params: Promise<{ id: string }
   const isOwner = v.sellerId === user?.id;
 
   const message = () => {
-    if (!user) { flash(t("auth.needed"), "err"); router.push("/login?next=" + encodeURIComponent("/cars/" + v.id)); return; }
+    if (!user) { flash(t("auth.needed"), "err"); router.push("/login?next=" + encodeURIComponent("/cars/view?id=" + v.id)); return; }
     if (isOwner) { flash(t("veh.ownlisting"), "err"); return; }
     const to = dealer ? (users.find((u) => u.role === "agent" && u.dealerId === dealer.id)?.id ?? dealer.ownerId) : v.sellerId;
     const tid = openThread(v.id, to);
@@ -128,7 +129,7 @@ export default function VehiclePage({ params }: { params: Promise<{ id: string }
                     {CHECKS.map((k) => <li key={k} className="flex items-center justify-between text-sm"><span>{t("check." + k)}</span><span className="flex gap-0.5" aria-label={`${report.checks[k].score}/5`}>{[1, 2, 3, 4, 5].map((n) => <span key={n} className={`h-2 w-5 rounded-full ${n <= report.checks[k].score ? "bg-ok" : "bg-ink-900/10"}`} />)}</span></li>)}
                   </ul>
                   <div className={`mt-4 flex items-center gap-2 text-sm font-semibold ${report.accidentFound ? "text-warn" : "text-ok"}`}>{report.accidentFound ? <ShieldAlert size={16} /> : <ShieldCheck size={16} />}{report.accidentFound ? t("insp.accfound") : t("insp.accnone")}</div>
-                  <Link href={`/reports/${report.id}`} className="btn btn-sm btn-outline mt-4" data-testid="open-report"><FileText size={15} />{t("insp.openreport")}</Link>
+                  <Link href={`/reports/view?id=${report.id}`} className="btn btn-sm btn-outline mt-4" data-testid="open-report"><FileText size={15} />{t("insp.openreport")}</Link>
                 </>
               ) : <p className="text-sm text-steel-500 py-4">{t("veh.noinspection")}</p>}
             </div>
@@ -165,7 +166,7 @@ export default function VehiclePage({ params }: { params: Promise<{ id: string }
               )}
               <div className="grid grid-cols-2 gap-2.5">
                 <button onClick={message} className="btn btn-sm btn-outline" data-testid="contact-seller">{t("veh.contact")}</button>
-                <button onClick={() => { if (!user) { flash(t("auth.needed"), "err"); router.push("/login?next=" + encodeURIComponent("/cars/" + v.id)); } else setAppt(true); }} className="btn btn-sm btn-outline" data-testid="open-appt"><CalendarCheck size={15} />{t("veh.schedule")}</button>
+                <button onClick={() => { if (!user) { flash(t("auth.needed"), "err"); router.push("/login?next=" + encodeURIComponent("/cars/view?id=" + v.id)); } else setAppt(true); }} className="btn btn-sm btn-outline" data-testid="open-appt"><CalendarCheck size={15} />{t("veh.schedule")}</button>
               </div>
             </div>
             <div className="mt-4 pt-4 border-t border-ink-900/[.07] flex items-center justify-between text-xs text-steel-500">
@@ -179,7 +180,7 @@ export default function VehiclePage({ params }: { params: Promise<{ id: string }
             <div className="flex items-center gap-3">
               <div className="h-12 w-12 rounded-2xl grid place-items-center text-white font-extrabold text-lg" style={{ background: dealer?.tone ?? "#0B0B0D" }}>{(dealer?.name ?? seller?.name ?? "?").replace(/[^\p{L}]/gu, "").slice(0, 1).toUpperCase()}</div>
               <div className="min-w-0">
-                {dealer ? <Link href={`/dealers/${dealer.id}`} className="font-bold hover:underline block truncate">{dealer.name}</Link> : <div className="font-bold truncate">{seller?.name}</div>}
+                {dealer ? <Link href={`/dealers/view?id=${dealer.id}`} className="font-bold hover:underline block truncate">{dealer.name}</Link> : <div className="font-bold truncate">{seller?.name}</div>}
                 <div className="text-xs text-steel-500">{dealer ? t("common.dealer") : t("common.individual")}</div>
               </div>
             </div>
@@ -266,3 +267,6 @@ function ApptModal({ open, onClose, onSave }: { open: boolean; onClose: () => vo
   );
 }
 void photoSrc;
+
+function VehiclePageQuery() { const id = useSearchParams().get("id") ?? ""; return <VehiclePageInner key={id} id={id} />; }
+export default function VehiclePage() { return <Suspense fallback={null}><VehiclePageQuery /></Suspense>; }
